@@ -5,15 +5,12 @@ package com.hm.mes_final_260106.entity;
 // 5M1E의 집약체 (Man, Machine, Material, Method, Measurement, Environment)
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class ProductionLog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

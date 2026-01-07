@@ -8,6 +8,6 @@ import java.util.List;
 
 @Repository
 public interface BomRepository extends JpaRepository<Bom, Long> {
-    List<Bom> findByProductCode(String productCode); // BOM
+    List<Bom> findAllByProductCode(String productCode); // 제품 생산에 소요되는 BOM(자재 명세서)
 
 }
