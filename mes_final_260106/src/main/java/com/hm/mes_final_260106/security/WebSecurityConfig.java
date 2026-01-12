@@ -10,6 +10,10 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -24,18 +28,34 @@ public class WebSecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+    // ✅ CORS 설정 Bean (이거 추가)
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOrigins(List.of("http://localhost:3000"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(List.of("*"));
+        config.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
+    }
+
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable()) //
+                .cors(Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) //
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint(jwtAuthenticationEntryPoint) //
                         .accessDeniedHandler(jwtAccessDeniedHandler) //
                 )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**").permitAll() // 로그인/회원가입 허용
-                        .requestMatchers("/api/mes/order/**", "/api/mes/material/**").hasRole("ADMIN") //
+                        .requestMatchers("/api/auth/**").permitAll() // 로그인/회원가입 허용
+                        .requestMatchers("/api/mes/order/**", "/api/mes/material/**").permitAll()//hasRole("ADMIN") //
                         .requestMatchers("/api/mes/machine/**").hasAnyRole("OPERATOR", "ADMIN") //
                         .anyRequest().authenticated()
                 )

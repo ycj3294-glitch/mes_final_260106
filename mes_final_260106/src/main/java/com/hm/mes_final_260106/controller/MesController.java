@@ -50,6 +50,7 @@ public class MesController {
     // 작업 지시 목록 조회 API
     @GetMapping("/orders")
     public ResponseEntity<List<WorkOrderResDto>> getAllOrders() {
+        log.info("작업 지시 요청");
         return ResponseEntity.ok(productionService.getAllWorkOrders().stream().map(WorkOrderResDto::fromEntity).toList());
     }
 
