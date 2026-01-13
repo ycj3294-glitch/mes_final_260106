@@ -1,4 +1,4 @@
-package com.hm.mes_final_260106;
+package com.hm.mes_final_260106.exception;
 
 import com.hm.mes_final_260106.dto.ErrorResponseDto;
 import org.springframework.http.ResponseEntity;
