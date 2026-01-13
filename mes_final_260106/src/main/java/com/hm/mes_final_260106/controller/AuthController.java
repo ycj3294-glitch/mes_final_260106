@@ -24,7 +24,6 @@ public class AuthController {
     // 회원가입
     @PostMapping("/signup")
     public ResponseEntity<MemberResDto> signup(@RequestBody SignUpReqDto requestDto) {
-        log.error("🔥🔥 SIGNUP CONTROLLER HIT 🔥🔥");
         log.info("signup requestDto {}", requestDto);
         return ResponseEntity.ok(authService.signUp(requestDto));
     }
@@ -36,6 +35,13 @@ public class AuthController {
         log.info("email = {}", requestDto.getEmail());
         log.info("password = {}", requestDto.getPassword());
         return ResponseEntity.ok(authService.login(requestDto));
+    }
+
+    // 토큰 재발급 : 프론트엔드와 C# 수집기에서 토큰이 만료되었을 때 호출합니다.
+    @PostMapping("/refresh")
+    public ResponseEntity<TokenDto> refresh(TokenDto tokenRequestDto) {
+        log.info("refresh tokenRequestDto {}", tokenRequestDto);
+        return ResponseEntity.ok(authService.refresh(tokenRequestDto));
     }
 }
 

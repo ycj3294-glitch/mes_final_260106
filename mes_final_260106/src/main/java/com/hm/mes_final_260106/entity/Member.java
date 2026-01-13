@@ -2,15 +2,13 @@ package com.hm.mes_final_260106.entity;
 
 import com.hm.mes_final_260106.constant.Authority;
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
+
 public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,6 +22,10 @@ public class Member {
 
     @Enumerated(EnumType.STRING)
     private Authority authority;
+
+    // 영속성 전이, 고아객체 제거
+    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private RefreshToken refreshToken;
 
     @Builder
     public Member(String email, String password, String name, Authority authority) {
