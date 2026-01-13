@@ -55,7 +55,7 @@ public class WebSecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll() // 로그인/회원가입 허용
-                        .requestMatchers("/api/mes/order/**", "/api/mes/material/**").permitAll()//hasRole("ADMIN") //
+                        .requestMatchers("/api/mes/order/**", "/api/mes/material/**").hasRole("ADMIN") //
                         .requestMatchers("/api/mes/machine/**").hasAnyRole("OPERATOR", "ADMIN") //
                         .anyRequest().authenticated()
                 )
