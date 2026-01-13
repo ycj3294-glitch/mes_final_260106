@@ -67,28 +67,26 @@ public class AuthService {
 
     // access token 재발급
     public TokenDto refresh(TokenDto tokenRequestDto) {
-        // 1. 전달받은 Refresh Token의 형태(서명 등) 검증
+        // 1. Refresh Token 유효성 검증
         if (!tokenProvider.validateToken(tokenRequestDto.getRefreshToken())) {
             throw new RuntimeException("전달된 Refresh Token이 유효하지 않습니다.");
         }
 
-        // 2. Access Token에서 사용자 식별 정보(ID) 추출
+        // 2. Access Token에서 사용자 ID 추출 (만료된 토큰도 parseClaims에서 추출 가능)
         Authentication authentication = tokenProvider.getAuthentication(tokenRequestDto.getAccessToken());
         Long memberId = Long.parseLong(authentication.getName());
 
-        // 3. DB에 저장된 1:1 매핑된 토큰 조회
+        // 3. DB에서 Refresh Token 검증
         RefreshToken refreshToken = refreshTokenRepository.findByMemberId(memberId)
                 .orElseThrow(() -> new RuntimeException("로그아웃 상태이거나 토큰이 존재하지 않습니다."));
-
-        // 4. DB의 토큰과 클라이언트가 보낸 토큰이 일치하는지 보안 검사
         if (!refreshToken.getToken().equals(tokenRequestDto.getRefreshToken())) {
             throw new RuntimeException("토큰 정보가 일치하지 않습니다. 다시 로그인해주세요.");
         }
 
-        // 5. 새로운 토큰 세트(Access + Refresh) 생성
+        // 4. 새로운 토큰 세트 발급 (Access + Refresh)
         TokenDto newTokenDto = tokenProvider.generateTokenDto(authentication);
 
-        // 6. DB 값 업데이트 (Token Rotation)
+        // 5. DB에 Refresh Token 업데이트 (Token Rotation)
         refreshToken.updateValue(newTokenDto.getRefreshToken());
 
         return newTokenDto;
